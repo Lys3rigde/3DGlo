@@ -5,6 +5,7 @@
 
 window.addEventListener(`DOMContentLoaded`, () => {
 
+    // getZero
     function getZero(num) {
         if (num > 0 && num < 10) {
             return '0' + num;
@@ -108,11 +109,7 @@ window.addEventListener(`DOMContentLoaded`, () => {
     };
     toggleMenu();
 
-
-
-
     //popup
-
     const togglePopup = () => {
         const popup = document.querySelector(`.popup`),
             popupBtn = document.querySelectorAll(`.popup-btn`);
@@ -162,13 +159,9 @@ window.addEventListener(`DOMContentLoaded`, () => {
 
         });
     };
-
-
     togglePopup();
 
-
     //tabs
-
     const tabs = () => {
         const tabHeader = document.querySelector(`.service-header`),
             tab = tabHeader.querySelectorAll(`.service-header-tab`),
@@ -203,7 +196,6 @@ window.addEventListener(`DOMContentLoaded`, () => {
     tabs();
 
     //slider
-
     const slider = () => {
         const slide = document.querySelectorAll(`.portfolio-item`),
             btn = document.querySelectorAll(`.portfolio-btn`),
@@ -307,11 +299,9 @@ window.addEventListener(`DOMContentLoaded`, () => {
 
         startSlide(1500);
     };
-
     slider();
 
     //cmd-data
-
     const setCommandImg = () => {
         const command = document.querySelector(`#command .row`);
 
@@ -332,7 +322,6 @@ window.addEventListener(`DOMContentLoaded`, () => {
     setCommandImg();
 
     //calc-valid
-
     const calcBlock = document.querySelector(`.calc-block`),
         calcBlockInput = calcBlock.querySelectorAll(`input`);
 
@@ -341,4 +330,49 @@ window.addEventListener(`DOMContentLoaded`, () => {
             i.value = i.value.replace(/\D/g, '');
         });
     });
+
+    //calculator
+    const calc = (price = 100) => {
+
+        const calcBlock = document.querySelector(`.calc-block`),
+            calcType = document.querySelector(`.calc-type`),
+            calcSquare = document.querySelector(`.calc-square`),
+            calcCount = document.querySelector(`.calc-count`),
+            calcDay = document.querySelector(`.calc-day`),
+            totalValue = document.getElementById(`total`);
+
+        const countSum = () => {
+            let total = 0,
+                countValue = 1,
+                dayValue = 1;
+            const typeValue = calcType.options[calcType.selectedIndex].value,
+                squareValue = +calcSquare.value;
+
+            if (calcCount.value > 1) {
+                countValue += (calcCount.value - 1) / 10;
+            }
+
+            if (calcDay.value && calcDay.value < 5) {
+                dayValue *= 2;
+            }   else if (calcDay.value && calcDay.value < 10) {
+                dayValue *= 1.5;
+            }
+
+            if (typeValue && squareValue) {
+                total = price * typeValue * squareValue * countValue * dayValue;
+            }
+
+            totalValue.textContent = total;
+        };
+
+        calcBlock.addEventListener(`change`, (event) => {
+            const target = event.target;
+
+            if (target.matches(`select`) || target.matches(`input`)) {
+                countSum();
+            }
+
+        });
+    };
+    calc(100);
 });

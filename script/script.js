@@ -383,92 +383,65 @@ window.addEventListener(`DOMContentLoaded`, () => {
             loadMessage = `Загрузка...`,
             successMessage = `Спасибо! Скоро мы с вами свяжемся!`;
 
-        const form = document.getElementById(`form1`),
-            popup = document.querySelector(`.popup`),
-            bottomForm = document.getElementById(`form2`),
-            popupForm = document.getElementById(`form3`);
-
-
         const statusMessage = document.createElement(`div`);
+        statusMessage.style.color = `#ade4f4`;
 
-        const postData = (body, outputData, errorData) => {
+        const postData = (body) => new Promise((resolve, reject) => {
             const request = new XMLHttpRequest();
             request.addEventListener(`readystatechange`, () => {
                 if (request.readyState !== 4) {
                     return;
                 }
                 if (request.status === 200) {
-                    outputData();
+                    resolve();
                 }   else {
-                    errorData(request.status);
+                    reject(request.status);
                 }
             });
-            request.open(`POST`, `./server.php`);
-            request.setRequestHeader(`Content-Type`, `application/json`);
+            request.open('POST', './server.php');
+            request.setRequestHeader('Content-Type', 'application/json');
             request.send(JSON.stringify(body));
-        };
+        });
 
-        form.addEventListener(`submit`, (e) => {
-            e.preventDefault();
+        const sendData = (form) => {
+            event.preventDefault();
             form.append(statusMessage);
+            let flag = true;
+
             statusMessage.textContent = loadMessage;
             const formData = new FormData(form);
             let body = {};
             formData.forEach((val, key) => {
-                body[key] = val;
+                if (val.trim() !== '') {
+                    body[key] = val;
+                }   else {
+                    flag = false;
+                }
             });
-            postData(body,
-                () => {
-                    statusMessage.textContent = successMessage;
-                },
-                (error) => {
-                    statusMessage.textContent = errorMessage;
-                    console.error(error);
-                });
-        });
+            if (flag) {
 
-        bottomForm.addEventListener(`submit`, (e) => {
-            e.preventDefault();
-            bottomForm.append(statusMessage);
-            statusMessage.textContent = loadMessage;
-            const formData = new FormData(bottomForm);
-            let body = {};
-            formData.forEach((val, key) => {
-                body[key] = val;
-            });
-            postData(body, () => {
-                statusMessage.textContent = successMessage;
-                bottomForm.reset();
-                setTimeout(() => {
-                    statusMessage.remove();
-                }, 2699);
-            }, (error) => {
-                statusMessage.textContent = errorMessage;
-                console.error(error);
-            });
-        });
+                postData(body)
+                    .then(() => {
+                        statusMessage.textContent = successMessage;
+                        form.reset();
+                        setTimeout(() => {
+                            statusMessage.remove();
+                        }, 3000);
+                    }, (error) => {
+                        statusMessage.textContent = errorMessage;
+                        console.error(error);
+                    })
+                    .catch(() => {
+                        statusMessage.textContent = `Ошибка при отправке формы!`;
+                    });
+            }   else {
+                statusMessage.textContent = `Заполните все поля формы!`;
+            }
+        };
 
-        popupForm.addEventListener(`submit`, (e) => {
-            e.preventDefault();
-            statusMessage.style.color = `#19b5fe`;
-            popupForm.append(statusMessage);
-            statusMessage.textContent = loadMessage;
-            const formData = new FormData(popupForm);
-            let body = {};
-            formData.forEach((val, key) => {
-                body[key] = val;
-            });
-            postData(body, () => {
-                statusMessage.textContent = successMessage;
-                popupForm.reset();
-                setTimeout(() => {
-                    statusMessage.remove();
-                    popup.style.display = `none`;
-                }, 3000);
-            }, (error) => {
-                statusMessage.textContent = errorMessage;
-                console.error(error);
-            });
+        document.body.addEventListener(`submit`, (event) => {
+            const target = event.target;
+            sendData(target);
         });
 
     };

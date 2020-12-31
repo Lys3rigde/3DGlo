@@ -1,10 +1,11 @@
+
+
 const toggleMenu = () => {
     const menu = document.querySelector('menu');
     let menuActive = false;
     const handlerMenu = () => {
         menuActive = !menuActive;
         menu.classList.toggle(`active-menu`);
-        animScroll();
     };
     document.body.addEventListener('click', (event) => {
         let target = event.target;

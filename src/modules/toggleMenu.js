@@ -37,7 +37,6 @@ const toggleMenu = () => {
 
     const handlerMenu = () => {
         menu.classList.toggle('active-menu');
-        animScroll();
     };
 
     body.addEventListener('click', (event) => {
@@ -49,6 +48,7 @@ const toggleMenu = () => {
         } else if (target.closest('.close-btn')) {
             handlerMenu();
         } else if (target.closest('a')) {
+            animScroll();
             handlerMenu();
         }
     });
